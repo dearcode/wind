@@ -37,7 +37,7 @@
                 <h4 class="modal-title" id="data_modal_title" >新</h4>
             </div>
             <div class="modal-body" id="modal_content">
-                <form class="form-horizontal" role="form" id="form_interface" >
+                <form class="form-horizontal" role="form" id="data_form" >
                     {{range .Fields}}
                     <div class="control-group" id="data_line_{{.Name}}">
                         <label class="control-label">{{.Lable}}</label>
@@ -130,6 +130,7 @@
     }
 
     function newModel() {
+        $("#data_form").each(function() { this.reset();});
         {{range .Fields}}
         {{if not .Addible}}
         $("#data_line_{{.Name}}").hide();
@@ -144,12 +145,30 @@
     function modifyDialog(e, value, row, index) {
         modifyID = row.ID;
         {{range .Fields}}
-        $("#{{.Name}}").val(row.{{print .Name}});
+        $("#{{.Name}}").val(row.{{.Name}});
+        $("#data_line_{{.Name}}").show();
+        {{if .Readonly}}
+        $("#{{.Name}}").attr("readonly","readonly");
+        {{else}}
+        $("#{{.Name}}").removeAttr("readonly");
+        {{end}}
         {{end}}
 
         $("#data_modal_title").html("修改接口基本信息");
         $("#data_dialog").modal('show');
     }
+    var confirmID = 0;
+    var confirmType = 0;
+
+    //显示删除确认对话框
+    function deleteDialog(e, value, row, index) {
+        confirmType = 0;
+        confirmID = row.ID;
+        $("#confirm_modal_title").html("确认要删除以下内容？");
+        $("#confirm_modal_content").html("<code>"+row.Name+"</code>");
+        $("#confirm_dialog").modal('show');
+    }
+
 
 
     function rowStyle(row, index) {
@@ -169,9 +188,7 @@
     function actionFormatter(value, row, index) {
         return '<a class="edit glyphicon glyphicon-pencil" href="javascript:void(0)" title="修改"></a>' +
         '&nbsp;&nbsp;' +
-        '<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除"></a>' +
-        '&nbsp;&nbsp;' +
-        '<a class="deploy glyphicon glyphicon-cloud-upload" href="javascript:void(0)" title="发布"></a>' ;
+        '<a class="delete glyphicon glyphicon-trash" href="javascript:void(0)" title="删除"></a>' ;
     }
 
     window.actionEvents = {

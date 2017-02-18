@@ -77,7 +77,7 @@ func init() {
 		Name:  template.HTML("site"),
 		Lable: "站点信息",
 		Fields: []server.ViewField{
-			{Name: "ID", Lable: "ID", Widget: server.WidgetText},
+			{Name: "ID", Lable: "ID", Widget: server.WidgetText, Readonly: true},
 			{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
 			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
 			{Name: "Mtime", Lable: "更新时间", Widget: server.WidgetText, Sortable: true, Addible: false, Visible: true, Modifiable: true, Readonly: true},

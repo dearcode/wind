@@ -39,8 +39,8 @@ const (
 //Visible 在列表框里是否显示
 //Readonly 是否可修改
 type ViewField struct {
-	Name       string
-	Lable      string
+	Name       template.JS
+	Lable      template.JS
 	Widget     WidgetType
 	Enum       []string
 	Sortable   bool
