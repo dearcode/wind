@@ -70,6 +70,7 @@ func (t *table) DoGet(w http.ResponseWriter, r *http.Request) {
 
 var (
 	site server.ViewTable
+	list server.ViewTable
 )
 
 func init() {
@@ -79,10 +80,46 @@ func init() {
 		Fields: []server.ViewField{
 			{Name: "ID", Lable: "ID", Widget: server.WidgetText, Readonly: true},
 			{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
+			{Name: "ListID", Lable: "列表ID", Widget: server.WidgetText, Addible: true},
+			{Name: "ListName", Lable: "列表", Reference: "list.name", Relation: "list_id = list.id", Widget: server.WidgetSelect, Sortable: true, Addible: true, Visible: true, Modifiable: true},
 			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
 			{Name: "Mtime", Lable: "更新时间", Widget: server.WidgetText, Sortable: true, Addible: false, Visible: true, Modifiable: true, Readonly: true},
 		},
 	}
+
+	list = server.ViewTable{
+		Name:  template.HTML("list"),
+		Lable: "列表规则",
+		Fields: []server.ViewField{
+			{Name: "ID", Lable: "ID", Widget: server.WidgetText, Readonly: true},
+			{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
+			{Name: "BodyBegin", Lable: "内容开始", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "BodyEnd", Lable: "内容结束", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "Mtime", Lable: "更新时间", Widget: server.WidgetText, Sortable: true, Addible: false, Visible: true, Modifiable: true, Readonly: true},
+		},
+	}
+
+	/*
+	  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+	  `name` varchar(32) NOT NULL,
+	  `body_begin` varchar(256) NOT NULL COMMENT '代码区域开始',
+	  `body_end` varchar(256) NOT NULL COMMENT '代码区域结束',
+	  `item_begin` varchar(256) NOT NULL COMMENT '每一个链接区域开始',
+	  `item_end` varchar(256) NOT NULL COMMENT '链接区域结束',
+	  `url_begin` varchar(256) NOT NULL COMMENT '链接开始',
+	  `url_end` varchar(256) NOT NULL COMMENT '链接结束',
+	  `title_begin` varchar(256) NOT NULL COMMENT '文章标题开始',
+	  `title_end` varchar(256) NOT NULL COMMENT '文章标题结束',
+	  `page_begin` varchar(256) NOT NULL,
+	  `page_end` varchar(256) NOT NULL,
+	  `next_label` varchar(32) NOT NULL DEFAULT '0',
+	  `ctime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	  `mtime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+	*/
 }
 
 type index struct {

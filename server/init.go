@@ -10,5 +10,5 @@ var (
 )
 
 func init() {
-	DBC = orm.NewDB("192.168.199.199", 3306, "cwind", "orm_test", "orm_test_password", "utf8", "10")
+	DBC = orm.NewDB("127.0.0.1", 3306, "cwind", "root", "guowei", "utf8", "10")
 }

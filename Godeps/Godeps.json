@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/dearcode/wind",
-	"GoVersion": "go1.7",
-	"GodepVersion": "v74",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
 	"Packages": [
 		"./..."
 	],
@@ -12,11 +12,15 @@
 		},
 		{
 			"ImportPath": "github.com/dearcode/petrel/handler",
-			"Rev": "ecf5f68d62f266949a39158efac436f35cca5005"
+			"Rev": "0fe8f5c6f4d9c4daf27255d2fcfc6df1bae72bcb"
 		},
 		{
 			"ImportPath": "github.com/dearcode/petrel/orm",
-			"Rev": "ecf5f68d62f266949a39158efac436f35cca5005"
+			"Rev": "0fe8f5c6f4d9c4daf27255d2fcfc6df1bae72bcb"
+		},
+		{
+			"ImportPath": "github.com/dearcode/petrel/validation",
+			"Rev": "0fe8f5c6f4d9c4daf27255d2fcfc6df1bae72bcb"
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
@@ -30,10 +34,6 @@
 		{
 			"ImportPath": "github.com/juju/errors",
 			"Rev": "6f54ff6318409d31ff16261533ce2c8381a4fd5d"
-		},
-		{
-			"ImportPath": "github.com/dearcode/petrel/validation",
-			"Rev": "ecf5f68d62f266949a39158efac436f35cca5005"
 		}
 	]
 }

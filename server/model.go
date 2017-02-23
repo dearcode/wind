@@ -6,9 +6,13 @@ import (
 
 //SiteInfo 对应站点表.
 type SiteInfo struct {
-	ID        uint64 `db_default:"auto"`
-	Status    bool
-	Name      string
+	ID     uint64 `db_default:"auto"`
+	Status bool
+	Name   string
+	List   struct {
+		ID   uint64
+		Name string
+	} `relation:"site.list_id = list.id"`
 	URL       string
 	Md5       string
 	Level     int
@@ -41,6 +45,8 @@ const (
 type ViewField struct {
 	Name       template.JS
 	Lable      template.JS
+	Reference  string
+	Relation   string
 	Widget     WidgetType
 	Enum       []string
 	Sortable   bool
