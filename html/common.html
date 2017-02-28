@@ -20,7 +20,11 @@
                 <tr>
                     {{range .Fields}}
                     {{if .Visible }}
+                    {{if .Reference}}
+                    <th data-field='{{.Name}}' data-sortable="{{.Sortable}}" data-formatter="{{.Reference}}Formatter">{{.Lable}}</th>
+                    {{else}}
                     <th data-field='{{.Name}}' data-sortable="{{.Sortable}}" >{{.Lable}}</th>
+                    {{end}}
                     {{end}}
                     {{end}}
                     <th data-formatter="actionFormatter" data-events="actionEvents">操作</th>
@@ -169,6 +173,15 @@
         $("#confirm_dialog").modal('show');
     }
 
+    {{range .Fields}}
+    {{if .Visible }}
+    {{if .Reference}}
+    function {{.Reference}}Formatter(value, row, index) {
+        return '<a target="_parent" href="/?table={{.Reference}}&id='+row.{{.Relation}}+'" >'+row.{{.Name}}+'</a>';
+    }
+    {{end}}
+    {{end}}
+    {{end}}
 
 
     function rowStyle(row, index) {

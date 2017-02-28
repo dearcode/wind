@@ -45,8 +45,8 @@ const (
 type ViewField struct {
 	Name       template.JS
 	Lable      template.JS
-	Reference  string
-	Relation   string
+	Reference  template.JS
+	Relation   template.JS
 	Widget     WidgetType
 	Enum       []string
 	Sortable   bool
