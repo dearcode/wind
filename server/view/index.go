@@ -20,6 +20,85 @@ type table struct {
 	Limit  int    `json:"limit"`
 }
 
+type selector struct {
+	Table string `json:"table"`
+}
+
+func (s *selector) DoGet(w http.ResponseWriter, r *http.Request) {
+	if err := handler.ParseURLVars(r, s); err != nil {
+		log.Errorf("invalid request:%v, error:%v", r, err)
+		handler.SendResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	s.Table = orm.FieldEscape(s.Table)
+
+	db, err := server.DBC.GetConnection()
+	if err != nil {
+		log.Errorf("GetConnection error:%v, req:%v", err, r)
+		handler.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer db.Close()
+
+	var rows interface{}
+
+	switch s.Table {
+	case "list":
+		rows = &[]server.ListSelector{}
+	}
+
+	if err = orm.NewStmt(db, s.Table).Query(rows); err != nil {
+		log.Errorf("query error:%v", errors.ErrorStack(err))
+		handler.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	log.Debugf("result rows:%v", rows)
+
+	handler.SendResponseData(w, rows)
+}
+
+func (t *table) DoPost(w http.ResponseWriter, r *http.Request) {
+	if err := handler.ParseURLVars(r, t); err != nil {
+		log.Errorf("invalid request:%v, error:%v", r, err)
+		handler.SendResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var data interface{}
+
+	switch t.Model {
+	case "site":
+		data = &server.SiteInfo{}
+	}
+
+	if err := handler.ParseFormVars(r, data); err != nil {
+		log.Errorf("invalid request:%v, error:%v", r, err)
+		handler.SendResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	db, err := server.DBC.GetConnection()
+	if err != nil {
+		log.Errorf("GetConnection error:%v, req:%v", err, r)
+		handler.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer db.Close()
+
+	id, err := orm.NewStmt(db, t.Model).Insert(data)
+	if err != nil {
+		log.Errorf("insert:%v error:%v", data, errors.ErrorStack(err))
+		handler.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	log.Debugf("insert %v, id:%v", data, id)
+
+	handler.SendResponseData(w, nil)
+}
+
 func (t *table) DoGet(w http.ResponseWriter, r *http.Request) {
 	if err := handler.ParseURLVars(r, t); err != nil {
 		log.Errorf("invalid request:%v, error:%v", r, err)
@@ -80,8 +159,8 @@ func init() {
 		Fields: []server.ViewField{
 			{Name: "ID", Lable: "ID", Widget: server.WidgetText, Readonly: true},
 			{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
-			{Name: "List.ID", Lable: "列表ID", Widget: server.WidgetText, Addible: true},
-			{Name: "List.Name", Lable: "列表", Reference: "List", Relation: "List.ID", Widget: server.WidgetSelect, Sortable: true, Addible: true, Visible: true, Modifiable: true},
+			{Name: "List.ID", Lable: "列表ID", Widget: server.WidgetText},
+			{Name: "List.Name", Lable: "列表", Reference: "List", Relation: "List.ID", Column: "ListID", Widget: server.WidgetSelect, Sortable: true, Addible: true, Visible: true, Modifiable: true},
 			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
 			{Name: "Mtime", Lable: "更新时间", Widget: server.WidgetText, Sortable: true, Addible: false, Visible: true, Modifiable: true, Readonly: true},
 		},

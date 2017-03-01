@@ -9,6 +9,7 @@ import (
 func init() {
 	handler.Server.AddInterface(&index{}, "/")
 	handler.Server.AddInterface(&table{}, "/table/")
+	handler.Server.AddInterface(&selector{}, "/selector/")
 	handler.Server.AddHandler(handler.GET, "/static/", true, onStaticGet)
 }
 

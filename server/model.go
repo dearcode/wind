@@ -4,6 +4,11 @@ import (
 	"html/template"
 )
 
+type ListSelector struct {
+	ID   uint64
+	Name string
+}
+
 //SiteInfo 对应站点表.
 type SiteInfo struct {
 	ID     uint64 `db_default:"auto"`
@@ -47,6 +52,7 @@ type ViewField struct {
 	Lable      template.JS
 	Reference  template.JS
 	Relation   template.JS
+	Column     template.JS
 	Widget     WidgetType
 	Enum       []string
 	Sortable   bool
