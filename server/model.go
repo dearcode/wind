@@ -30,6 +30,25 @@ type SiteInfo struct {
 	Mtime     string `db_defualt:"now()"`
 }
 
+//ListInfo 对应列表.
+type ListInfo struct {
+	ID         uint64 `db_default:"auto"`
+	Name       string
+	BodyBegin  string
+	BodyEnd    string
+	ItemBegin  string
+	ItemEnd    string
+	URLBegin   string `db:"url_begin"`
+	URLEnd     string `db:"url_end"`
+	TitleBegin string
+	TitleEnd   string
+	PageBegin  string
+	PageEnd    string
+	NextLabel  string
+	Ctime      string `db_defualt:"now()"`
+	Mtime      string `db_defualt:"now()"`
+}
+
 //WidgetType 控件类型
 type WidgetType int
 

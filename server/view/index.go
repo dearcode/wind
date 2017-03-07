@@ -134,6 +134,8 @@ func (t *table) DoGet(w http.ResponseWriter, r *http.Request) {
 	switch t.Model {
 	case "site":
 		rows = &[]server.SiteInfo{}
+	case "list":
+		rows = &[]server.ListInfo{}
 	}
 
 	if err = stmt.Query(rows); err != nil {
@@ -174,9 +176,6 @@ func init() {
 			{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
 			{Name: "BodyBegin", Lable: "内容开始", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
 			{Name: "BodyEnd", Lable: "内容结束", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
-			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
-			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
-			{Name: "URL", Lable: "URL", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
 			{Name: "Mtime", Lable: "更新时间", Widget: server.WidgetText, Sortable: true, Addible: false, Visible: true, Modifiable: true, Readonly: true},
 		},
 	}
@@ -191,10 +190,10 @@ func (i *index) DoGet(w http.ResponseWriter, r *http.Request) {
 	var table server.ViewTable
 
 	switch r.URL.Query().Get("table") {
+	case "list":
+		table = list
 	default:
 		table = site
-	case "List":
-		table = list
 	}
 
 	if err := t.Execute(w, table); err != nil {
