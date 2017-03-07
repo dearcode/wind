@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/davygeek/log"
-	"github.com/dearcode/petrel/handler"
-	"github.com/dearcode/petrel/orm"
+	"github.com/dearcode/crab/handler"
+	"github.com/dearcode/crab/orm"
 	"github.com/juju/errors"
 
 	"github.com/dearcode/wind/server"

@@ -3,7 +3,7 @@
 	"GoVersion": "go1.8",
 	"GodepVersion": "v79",
 	"Packages": [
-		"./..."
+		"github.com/dearcode/wind/..."
 	],
 	"Deps": [
 		{
@@ -11,16 +11,16 @@
 			"Rev": "d4d997220708589b22858ade5405e9f17036d22b"
 		},
 		{
-			"ImportPath": "github.com/dearcode/petrel/handler",
-			"Rev": "0fe8f5c6f4d9c4daf27255d2fcfc6df1bae72bcb"
+			"ImportPath": "github.com/dearcode/crab/handler",
+			"Rev": "567e58446a8c58d58131fe796ba5248afc4ffa23"
 		},
 		{
-			"ImportPath": "github.com/dearcode/petrel/orm",
-			"Rev": "0fe8f5c6f4d9c4daf27255d2fcfc6df1bae72bcb"
+			"ImportPath": "github.com/dearcode/crab/orm",
+			"Rev": "567e58446a8c58d58131fe796ba5248afc4ffa23"
 		},
 		{
-			"ImportPath": "github.com/dearcode/petrel/validation",
-			"Rev": "0fe8f5c6f4d9c4daf27255d2fcfc6df1bae72bcb"
+			"ImportPath": "github.com/dearcode/crab/validation",
+			"Rev": "567e58446a8c58d58131fe796ba5248afc4ffa23"
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",

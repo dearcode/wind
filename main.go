@@ -2,17 +2,22 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"net"
 	"net/http"
 
-	"github.com/dearcode/petrel/handler"
-	_ "github.com/dearcode/wind/server/api"
+	"github.com/dearcode/crab/handler"
+	"github.com/dearcode/wind/server"
 	_ "github.com/dearcode/wind/server/view"
 )
 
 func main() {
 	addr := flag.String("h", ":9000", "api listen address")
 	flag.Parse()
+
+	if err := server.Init(); err != nil {
+		panic(err.Error())
+	}
 
 	ln, err := net.Listen("tcp", *addr)
 	if err != nil {
