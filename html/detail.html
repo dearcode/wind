@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        {{template "header.html"}}
+        <title>{{.Lable}}</title>
+    </head>
+
+    <body>
+        {{template "navbar.html"}}
+
+        <div class="container">
+            <div class="row">
+                {{range .Fields}}
+                <div class="control-group" id="data_line_{{.Name}}">
+                    <label class="control-label">{{.Lable}}</label>
+                    <div class="controls">
+                        {{if eq .Widget 0}}
+                        <input type="text" readonly="readonly" class="form-control" id="{{.Name}}" name="{{.Name}}" value="" >
+                        {{else if eq .Widget 3}}
+                        <textarea class="form-control" id="{{.Name}}" name="{{.Name}}" value="" readonly="readonly" ></textarea>
+                        {{end}}
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+
+        {{template "footer.html" .}}
+
+        <script>
+            function initView() {
+                $.ajax({ 
+                    type: "GET",
+                    url:"/item/?table={{.Name}}&id={{.ID}}", 
+                    dataType:"json",
+                    success:function(result){
+                        {{range .Fields}}
+                        $("#{{.Name}}").val(result.Data.{{.Name}});
+                        {{end}}
+                    }, 
+                    error:function(XMLHttpRequest,textStatus, errorThrown) { 
+                        alert(errorThrown);
+                    }
+                });
+            }
+
+            $(function(){
+                initView();
+            });
+
+        </script>
+
+    </body>
+</html>
+

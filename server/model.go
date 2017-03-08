@@ -59,6 +59,8 @@ const (
 	WidgetSelect
 	//WidgetRadio 单选按钮.
 	WidgetRadio
+	//WidgetTextArea 多行文本.
+	WidgetTextArea
 )
 
 //ViewField 前端显示用的字段属性.
@@ -84,6 +86,7 @@ type ViewField struct {
 //ViewTable 前端显示用, 对应数据库中的table.
 type ViewTable struct {
 	Name   template.HTML
+	ID     template.JS
 	Lable  string
 	Fields []ViewField
 }

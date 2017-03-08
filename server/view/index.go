@@ -20,6 +20,48 @@ type table struct {
 	Limit  int    `json:"limit"`
 }
 
+type item struct {
+	ID    int64  `json:"id"`
+	Table string `json:"table"`
+}
+
+func (i *item) DoGet(w http.ResponseWriter, r *http.Request) {
+	if err := handler.ParseURLVars(r, i); err != nil {
+		log.Errorf("invalid request:%v, error:%v", r, err)
+		handler.SendResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	i.Table = orm.FieldEscape(i.Table)
+
+	db, err := server.DBC.GetConnection()
+	if err != nil {
+		log.Errorf("GetConnection error:%v, req:%v", err, r)
+		handler.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer db.Close()
+
+	var data interface{}
+
+	switch i.Table {
+	case "site":
+		data = &server.SiteInfo{}
+	case "list":
+		data = &server.ListInfo{}
+	}
+
+	if err = orm.NewStmt(db, i.Table).Query(data); err != nil {
+		log.Errorf("query error:%v", errors.ErrorStack(err))
+		handler.SendResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	log.Debugf("result data:%v", data)
+
+	handler.SendResponseData(w, data)
+}
+
 type selector struct {
 	Table string `json:"table"`
 }
@@ -174,12 +216,41 @@ func init() {
 		Fields: []server.ViewField{
 			{Name: "ID", Lable: "ID", Widget: server.WidgetText, Readonly: true},
 			{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
-			{Name: "BodyBegin", Lable: "内容开始", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
-			{Name: "BodyEnd", Lable: "内容结束", Widget: server.WidgetText, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "BodyBegin", Lable: "内容开始", Widget: server.WidgetTextArea, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "BodyEnd", Lable: "内容结束", Widget: server.WidgetTextArea, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "ItemEnd", Lable: "子项开始", Widget: server.WidgetTextArea, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "ItemEnd", Lable: "子项结束", Widget: server.WidgetTextArea, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "URLEnd", Lable: "链接开始", Widget: server.WidgetTextArea, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "URLEnd", Lable: "链接结束", Widget: server.WidgetTextArea, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "PageEnd", Lable: "页签开始", Widget: server.WidgetTextArea, Sortable: false, Addible: true, Visible: true, Modifiable: true},
+			{Name: "PageEnd", Lable: "页签结束", Widget: server.WidgetTextArea, Sortable: false, Addible: true, Visible: true, Modifiable: true},
 			{Name: "Mtime", Lable: "更新时间", Widget: server.WidgetText, Sortable: true, Addible: false, Visible: true, Modifiable: true, Readonly: true},
 		},
 	}
 
+}
+
+type detail struct {
+}
+
+func (d *detail) DoGet(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFiles("./html/detail.html", "./html/navbar.html", "./html/footer.html", "./html/header.html", "./html/common.html"))
+	var table server.ViewTable
+
+	switch r.URL.Query().Get("table") {
+	case "list", "List":
+		table = list
+	default:
+		table = site
+	}
+
+	table.ID = template.JS(r.URL.Query().Get("id"))
+
+	if err := t.Execute(w, table); err != nil {
+		log.Errorf("Execute error:%v, site:%+v", err, site)
+		return
+	}
+	log.Debugf("site:%+v", site)
 }
 
 type index struct {

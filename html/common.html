@@ -57,6 +57,8 @@
                             {{else if eq .Widget 1}}
                             <select class="form-control" id="{{.Column}}" name="{{.Column}}" >
                             </select>
+                            {{else if eq .Widget 3}}
+                            <textarea class="form-control" id="{{.Name}}" name="{{.Name}}" value="" placeholder="" rows="2" ></textarea>
                             {{end}}
                         </div>
                     </div>
@@ -177,7 +179,7 @@
     {{if .Visible }}
     {{if .Reference}}
     function {{.Reference}}Formatter(value, row, index) {
-        return '<a target="_parent" href="/?table={{.Reference}}&id='+row.{{.Relation}}+'" >'+row.{{.Name}}+'</a>';
+        return '<a target="_parent" href="/detail/?table={{.Reference}}&id='+row.{{.Relation}}+'" >'+row.{{.Name}}+'</a>';
     }
     {{end}}
     {{end}}
