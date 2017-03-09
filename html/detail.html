@@ -14,11 +14,7 @@
                 <div class="control-group" id="data_line_{{.Name}}">
                     <label class="control-label">{{.Lable}}</label>
                     <div class="controls">
-                        {{if eq .Widget 0}}
-                        <input type="text" readonly="readonly" class="form-control" id="{{.Name}}" name="{{.Name}}" value="" >
-                        {{else if eq .Widget 3}}
-                        <textarea class="form-control" id="{{.Name}}" name="{{.Name}}" value="" readonly="readonly" ></textarea>
-                        {{end}}
+                        <pre id="{{.Name}}" ></pre>
                     </div>
                 </div>
                 {{end}}
@@ -35,7 +31,7 @@
                     dataType:"json",
                     success:function(result){
                         {{range .Fields}}
-                        $("#{{.Name}}").val(result.Data.{{.Name}});
+                        $("#{{.Name}}").text((result.Data.{{.Name}}));
                         {{end}}
                     }, 
                     error:function(XMLHttpRequest,textStatus, errorThrown) { 
