@@ -234,7 +234,13 @@ type detail struct {
 }
 
 func (d *detail) DoGet(w http.ResponseWriter, r *http.Request) {
-	t := template.Must(template.ParseFiles("./html/detail.html", "./html/navbar.html", "./html/footer.html", "./html/header.html", "./html/common.html"))
+	t := template.Must(template.ParseFiles(
+		"./html/detail.html",
+		"./html/navbar.html",
+		"./html/footer.html",
+		"./html/header.html",
+		"./html/edit.html",
+	))
 	var table server.ViewTable
 
 	switch r.URL.Query().Get("table") {
@@ -257,7 +263,16 @@ type index struct {
 }
 
 func (i *index) DoGet(w http.ResponseWriter, r *http.Request) {
-	t := template.Must(template.ParseFiles("./html/index.html", "./html/navbar.html", "./html/footer.html", "./html/header.html", "./html/common.html"))
+	t := template.Must(template.ParseFiles(
+		"./html/index.html",
+		"./html/navbar.html",
+		"./html/footer.html",
+		"./html/header.html",
+		"./html/list.html",
+		"./html/edit.html",
+		"./html/message.html",
+		"./html/common.html",
+	))
 	var table server.ViewTable
 
 	switch r.URL.Query().Get("table") {

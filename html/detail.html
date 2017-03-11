@@ -6,17 +6,25 @@
     </head>
 
     <body>
-        {{template "navbar.html"}}
+        {{template "navbar.html" .}}
 
+    <div class="row">
         <div class="container">
-            <div class="row">
-                {{range .Fields}}
+            <button type="button" class="btn btn-success" onclick="openModifyDialog()">修改{{.Lable}}</button>
+        </div>
+    </div>
+
+        {{template "edit.html" .}}
+
+    <div class="row">
+        <div class="container"> 
+        {{range .Fields}}
                 <div class="control-group" id="data_line_{{.Name}}">
                     <label class="control-label">{{.Lable}}</label>
                     <div class="controls">
-                        <pre id="{{.Name}}" ></pre>
+                        <pre id="detail_{{.Name}}" ></pre>
                     </div>
-                </div>
+                </div> 
                 {{end}}
             </div>
         </div>
@@ -24,6 +32,13 @@
         {{template "footer.html" .}}
 
         <script>
+
+            var data = {}
+            function openModifyDialog() {
+                modifyDialog(data);
+            }
+
+
             function initView() {
                 $.ajax({ 
                     type: "GET",
@@ -31,7 +46,8 @@
                     dataType:"json",
                     success:function(result){
                         {{range .Fields}}
-                        $("#{{.Name}}").text((result.Data.{{.Name}}));
+                        data.{{.Name}} = result.Data.{{.Name}};
+                        $("#detail_{{.Name}}").text((result.Data.{{.Name}}));
                         {{end}}
                     }, 
                     error:function(XMLHttpRequest,textStatus, errorThrown) { 

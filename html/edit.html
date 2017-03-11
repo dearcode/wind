@@ -1,0 +1,119 @@
+<div class="modal fade" id="data_dialog" style="z-index:2000">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="data_modal_title" >新</h4>
+            </div>
+            <div class="modal-body" id="modal_content">
+                <form class="form-horizontal" role="form" id="data_form" >
+                    {{range .Fields}}
+                    {{if .Addible}}
+                    <div class="control-group" id="data_line_{{.Name}}">
+                        <label class="control-label">{{.Lable}}</label>
+                        <div class="controls">
+                            {{if eq .Widget 0}}
+                            <input type="text" class="form-control" id="{{.Name}}" name="{{.Name}}" value="" placeholder="" >
+                            {{else if eq .Widget 2}}
+                            {{range $i, $v := .Enum}}
+                            <label class="radio-inline"> <input type="radio" name="{{.Name}}" id="{{.Name}}" value="{{$i}}" >{{$v}}</label>
+                            {{end}}
+                            {{else if eq .Widget 1}}
+                            <select class="form-control" id="{{.Column}}" name="{{.Column}}" >
+                            </select>
+                            {{else if eq .Widget 3}}
+                            <textarea class="form-control" id="{{.Name}}" name="{{.Name}}" value="" placeholder="" rows="2" ></textarea>
+                            {{end}}
+                        </div>
+                    </div>
+                    {{end}}
+                    {{end}}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">放弃</button>
+                <button type="button" class="btn btn-primary" onclick="submit()">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script>
+
+    function createDialog() {
+        $("#data_form").each(function() { this.reset();});
+        {{range .Fields}}
+        {{if not .Addible}}
+        $("#data_line_{{.Name}}").hide();
+        {{end}}
+        {{end}}
+        $("#data_modal_title").html("新建{{.Lable}}");
+        $("#data_dialog").modal('show');
+    }
+
+    var modifyID = 0;
+    //显示修改接口对话框
+    function modifyDialog(item) {
+        modifyID = item.ID;
+        {{range .Fields}}
+        $("#{{.Name}}").val(item.{{.Name}});
+        $("#data_line_{{.Name}}").show();
+        {{if .Readonly}}
+        $("#{{.Name}}").attr("readonly","readonly");
+        {{else}}
+        $("#{{.Name}}").removeAttr("readonly");
+        {{end}}
+        {{end}}
+
+        $("#data_modal_title").html("修改{{.Lable}}");
+        $("#data_dialog").modal('show');
+    }
+
+
+
+    var confirmID = 0;
+
+    //显示删除确认对话框
+    function deleteDialog(item, id) {
+        confirmID = item.ID;
+        $("#confirm_modal_title").html("确认要删除以下内容？");
+        $("#confirm_modal_content").html("<code>"+item.Name+"</code>");
+        $("#confirm_dialog").modal('show');
+    }
+
+    function initView() {
+        {{range .Fields}}
+        {{if eq .Widget 1}}
+        $.ajax({ 
+            type: "GET",
+            url:"/selector/?table={{.Reference}}", 
+            dataType:"json",
+            success:function(result){
+                $.each(result.Data, function (index, item) {  
+                    $("#{{.Column}}").append("<option value='"+item.ID+"'>"+item.Name+"</option>");
+                }); 
+            }, 
+            error:function(XMLHttpRequest,textStatus, errorThrown) { 
+                alert(errorThrown);
+            }
+        });
+        {{end}}
+        {{end}}
+    }
+
+    function submit() {
+        $.ajax(
+        {
+            type: "POST",
+            url: "/table/",
+            data: $("#data_form").serialize(),
+            async: false,
+            success: function(data, status) { 
+            }
+        });
+    }
+
+    initView();
+
+</script>
