@@ -10,11 +10,8 @@ import (
 
 	"github.com/davygeek/log"
 	"github.com/juju/errors"
-)
 
-var (
-	//ErrNotFound db not found.
-	ErrNotFound = errors.New("not found")
+	"github.com/dearcode/crab/meta"
 )
 
 //Stmt db stmt.
@@ -32,7 +29,7 @@ type Stmt struct {
 //NewStmt new db stmt.
 func NewStmt(db *sql.DB, table string) *Stmt {
 	return &Stmt{
-		table: table,
+		table: FieldEscape(table),
 		db:    db,
 	}
 }
@@ -146,6 +143,7 @@ func (s *Stmt) SQLCount() string {
 	return sql
 }
 
+//SQLColumn 生成查询需要的列，目前只是内部用.
 func (s *Stmt) SQLColumn(rt reflect.Type, table string) string {
 	bs := bytes.NewBufferString("")
 	for i := 0; i < rt.NumField(); i++ {
@@ -153,9 +151,13 @@ func (s *Stmt) SQLColumn(rt reflect.Type, table string) string {
 		if f.PkgPath != "" && !f.Anonymous { // unexported
 			continue
 		}
-		if f.Type.Kind() == reflect.Struct {
+		switch f.Type.Kind() {
+		case reflect.Struct:
 			bs.WriteString(s.SQLColumn(f.Type, FieldEscape(f.Name)))
-			s.addWhere(f.Tag.Get("relation"))
+			n := FieldEscape(f.Name)
+			s.addWhere(fmt.Sprintf("%s.%s_id = %s.id", table, n, n))
+			continue
+		case reflect.Slice:
 			continue
 		}
 		name := f.Tag.Get("db")
@@ -197,12 +199,31 @@ func (s *Stmt) SQLQuery(rt reflect.Type) string {
 	return sql
 }
 
+func (s *Stmt) firstTable() string {
+	if idx := strings.Index(s.table, ","); idx > -1 {
+		return s.table[:idx]
+	}
+	return s.table
+}
+
+// addRelation 添加多表关联条件
+func (s *Stmt) addRelation(t1, t2 string, id int64) *Stmt {
+	t1 = FieldEscape(t1)
+	t2 = FieldEscape(t2)
+	s.addWhere(fmt.Sprintf("id in (select %s_id from %s_%s_relation where %s_id=%d)", t1, t2, t1, t2, id))
+	return s
+}
+
 // Query 根据传入的result结构，生成查询sql，并返回执行结果， result 必需是一个指向切片的指针.
 func (s *Stmt) Query(result interface{}) error {
+	if result == nil {
+		return meta.ErrArgIsNil
+	}
+
 	rt := reflect.TypeOf(result)
 
 	if rt.Kind() != reflect.Ptr {
-		return fmt.Errorf("result type must be ptr, recv:%v", rt.Kind())
+		return errors.Trace(meta.ErrArgNotPtr)
 	}
 
 	//ptr
@@ -231,42 +252,74 @@ func (s *Stmt) Query(result interface{}) error {
 
 	for rows.Next() {
 		var refs []interface{}
-		obj := reflect.New(rt)
+		obj := reflect.New(rt).Elem()
+		var idx int
 
-		for i := 0; i < obj.Elem().NumField(); i++ {
+		for i := 0; i < obj.NumField(); i++ {
 			f := rt.Field(i)
 			if f.PkgPath != "" && !f.Anonymous { // unexported
 				continue
 			}
-			if f.Type.Kind() == reflect.Struct {
-				for j := 0; j < obj.Elem().Field(i).NumField(); j++ {
+
+			if f.Name == "ID" {
+				idx = len(refs)
+			}
+
+			switch f.Type.Kind() {
+			case reflect.Struct:
+				//一对一，这里代码重复是为了减少交互.
+				for j := 0; j < obj.Field(i).NumField(); j++ {
 					sf := rt.Field(i).Type.Field(j)
 					if sf.PkgPath != "" && !sf.Anonymous { // unexported
 						continue
 					}
-					refs = append(refs, obj.Elem().Field(i).Field(j).Addr().Interface())
+
+					refs = append(refs, obj.Field(i).Field(j).Addr().Interface())
 				}
+				continue
+			case reflect.Slice:
 				continue
 			}
 
-			refs = append(refs, obj.Elem().Field(i).Addr().Interface())
+			refs = append(refs, obj.Field(i).Addr().Interface())
 		}
 
 		if err = rows.Scan(refs...); err != nil {
 			return errors.Trace(err)
 		}
 
+		//一对多
+		for i := 0; i < obj.NumField(); i++ {
+			f := rt.Field(i)
+			if f.PkgPath != "" && !f.Anonymous { // unexported
+				continue
+			}
+			if f.Type.Kind() != reflect.Slice {
+				continue
+			}
+
+			id := *refs[idx].(*int64)
+			lr := obj.Field(i).Addr().Interface()
+
+			//填充一对多结果，每次去查询
+			if err = NewStmt(s.db, f.Name).addRelation(f.Name, s.firstTable(), id).Query(lr); err != nil {
+				if errors.Cause(err) != meta.ErrNotFound {
+					return errors.Trace(err)
+				}
+			}
+		}
+
 		if rv.Kind() == reflect.Struct {
-			reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj.Elem().Interface()))
+			reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj.Interface()))
 			log.Debugf("result %v", result)
 			return nil
 		}
 
-		rv = reflect.Append(rv, obj.Elem())
+		rv = reflect.Append(rv, obj)
 	}
 
 	if rv.Kind() == reflect.Struct || rv.Len() == 0 {
-		return errors.Trace(ErrNotFound)
+		return errors.Trace(meta.ErrNotFound)
 	}
 
 	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(rv.Interface()))
@@ -401,6 +454,9 @@ func (s *Stmt) SQLUpdate(rt reflect.Type, rv reflect.Value) (sql string, refs []
 
 //Update sql update db.
 func (s *Stmt) Update(data interface{}) (int64, error) {
+	if data == nil {
+		return 0, errors.Trace(meta.ErrArgIsNil)
+	}
 	rt := reflect.TypeOf(data)
 	rv := reflect.ValueOf(data)
 
@@ -410,7 +466,7 @@ func (s *Stmt) Update(data interface{}) (int64, error) {
 	}
 
 	if rt.NumField() == 0 {
-		return 0, fmt.Errorf("data not found field")
+		return 0, errors.Trace(meta.ErrFieldNotFound)
 	}
 	sql, refs := s.SQLUpdate(rt, rv)
 	r, err := s.db.Exec(sql, refs...)
@@ -422,6 +478,9 @@ func (s *Stmt) Update(data interface{}) (int64, error) {
 
 //Insert sql update db.
 func (s *Stmt) Insert(data interface{}) (int64, error) {
+	if data == nil {
+		return 0, errors.Trace(meta.ErrArgIsNil)
+	}
 	rt := reflect.TypeOf(data)
 	rv := reflect.ValueOf(data)
 
@@ -431,7 +490,7 @@ func (s *Stmt) Insert(data interface{}) (int64, error) {
 	}
 
 	if rt.NumField() == 0 {
-		return 0, fmt.Errorf("data not found field")
+		return 0, errors.Trace(meta.ErrFieldNotFound)
 	}
 
 	sql, refs := s.SQLInsert(rt, rv)

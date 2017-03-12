@@ -52,10 +52,10 @@
         $("#data_dialog").modal('show');
     }
 
-    var modifyID = 0;
+    var confirmID = 0;
     //显示修改接口对话框
     function modifyDialog(item) {
-        modifyID = item.ID;
+        confirmID = item.ID;
         {{range .Fields}}
         $("#{{.Name}}").val(item.{{.Name}});
         $("#data_line_{{.Name}}").show();
@@ -71,8 +71,6 @@
     }
 
 
-
-    var confirmID = 0;
 
     //显示删除确认对话框
     function deleteDialog(item, id) {
@@ -103,13 +101,21 @@
     }
 
     function submit() {
+        method = "POST";
+        url = "/table/?model={{.Name}}";
+        if (confirmID != 0) {
+            method = "PUT";
+            url += "&id="+confirmID;
+        }
+
         $.ajax(
         {
-            type: "POST",
-            url: "/table/",
+            type: method,
+            url: url,
             data: $("#data_form").serialize(),
             async: false,
             success: function(data, status) { 
+                showMessage("ok", "success");
             }
         });
     }

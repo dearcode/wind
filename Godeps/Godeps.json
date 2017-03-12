@@ -12,15 +12,15 @@
 		},
 		{
 			"ImportPath": "github.com/dearcode/crab/handler",
-			"Rev": "567e58446a8c58d58131fe796ba5248afc4ffa23"
+			"Rev": "b9a5720e2dbe4c2bf62225766853e252d1872b01"
 		},
 		{
 			"ImportPath": "github.com/dearcode/crab/orm",
-			"Rev": "567e58446a8c58d58131fe796ba5248afc4ffa23"
+			"Rev": "b9a5720e2dbe4c2bf62225766853e252d1872b01"
 		},
 		{
 			"ImportPath": "github.com/dearcode/crab/validation",
-			"Rev": "567e58446a8c58d58131fe796ba5248afc4ffa23"
+			"Rev": "b9a5720e2dbe4c2bf62225766853e252d1872b01"
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
@@ -34,6 +34,10 @@
 		{
 			"ImportPath": "github.com/juju/errors",
 			"Rev": "6f54ff6318409d31ff16261533ce2c8381a4fd5d"
+		},
+		{
+			"ImportPath": "github.com/dearcode/crab/meta",
+			"Rev": "b9a5720e2dbe4c2bf62225766853e252d1872b01"
 		}
 	]
 }
