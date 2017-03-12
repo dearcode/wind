@@ -114,8 +114,14 @@
             url: url,
             data: $("#data_form").serialize(),
             async: false,
-            success: function(data, status) { 
-                showMessage("ok", "success");
+            success: function(result, status) { 
+                if (result.Status == 0) {
+                    $("#data_dialog").modal('hide');
+                    showMessageAlert("<h3>成功</h3>");
+                    $('#data_table').bootstrapTable('refreshOptions',{pageNumber: 1,offset:0});
+                    return;
+                }
+                showMessage("出错了", result.Message);
             }
         });
     }

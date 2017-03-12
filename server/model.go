@@ -17,7 +17,7 @@ type SiteInfo struct {
 	List   struct {
 		ID   uint64
 		Name string
-	} `relation:"site.list_id = list.id"`
+	}
 	URL       string
 	Md5       string
 	Level     int
@@ -26,8 +26,8 @@ type SiteInfo struct {
 	ListID    uint64
 	ContentID uint64
 	StoreID   uint64
-	Ctime     string `db_defualt:"now()"`
-	Mtime     string `db_defualt:"now()"`
+	Ctime     string `db_default:"now()"`
+	Mtime     string `db_default:"now()"`
 }
 
 //ListInfo 对应列表.
@@ -45,8 +45,8 @@ type ListInfo struct {
 	PageBegin  string
 	PageEnd    string
 	NextLabel  string
-	Ctime      string `db_defualt:"now()"`
-	Mtime      string `db_defualt:"now()"`
+	Ctime      string `db_default:"now()"`
+	Mtime      string `db_default:"now()"`
 }
 
 //WidgetType 控件类型
