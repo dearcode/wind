@@ -4,6 +4,7 @@ import (
 	"html/template"
 )
 
+//ListSelector 下拉列表
 type ListSelector struct {
 	ID   uint64
 	Name string
@@ -47,6 +48,22 @@ type ListInfo struct {
 	NextLabel  string
 	Ctime      string `db_default:"now()"`
 	Mtime      string `db_default:"now()"`
+}
+
+//ContentInfo 对应内容.
+type ContentInfo struct {
+	ID           uint64 `db_default:"auto"`
+	Name         string
+	BodyBegin    string
+	BodyEnd      string
+	TitleBegin   string
+	TitleEnd     string
+	DateBegin    string
+	DateEnd      string
+	ContentBegin string
+	ContentEnd   string
+	Ctime        string `db_default:"now()"`
+	Mtime        string `db_default:"now()"`
 }
 
 //WidgetType 控件类型
