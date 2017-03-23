@@ -32,15 +32,16 @@ func (s *selector) DoGet(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	var rows interface{}
-
-	switch s.Table {
-	case "list":
-		rows = &[]server.ListSelector{}
+	table, ok := tables[r.URL.Query().Get("table")]
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
+	rows := table.Selector
+
 	if err = orm.NewStmt(db, s.Table).Query(rows); err != nil {
-		log.Errorf("query error:%v", errors.ErrorStack(err))
+		log.Errorf("query error:%v, req:%v", errors.ErrorStack(err), r)
 		handler.SendResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}

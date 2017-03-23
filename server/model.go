@@ -10,12 +10,22 @@ type ListSelector struct {
 	Name string
 }
 
+//ContentSelector 下拉列表
+type ContentSelector struct {
+	ID   uint64
+	Name string
+}
+
 //SiteInfo 对应站点表.
 type SiteInfo struct {
 	ID     uint64 `db_default:"auto"`
 	Status bool
 	Name   string
 	List   struct {
+		ID   uint64
+		Name string
+	}
+	Content struct {
 		ID   uint64
 		Name string
 	}
@@ -102,8 +112,9 @@ type ViewField struct {
 
 //ViewTable 前端显示用, 对应数据库中的table.
 type ViewTable struct {
-	Name   template.HTML
-	ID     template.JS
-	Lable  string
-	Fields []ViewField
+	Name     template.HTML
+	ID       template.JS
+	Lable    string
+	Selector interface{}
+	Fields   []ViewField
 }

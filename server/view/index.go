@@ -5,8 +5,6 @@ import (
 	"net/http"
 
 	"github.com/davygeek/log"
-
-	"github.com/dearcode/wind/server"
 )
 
 type detail struct {
@@ -21,24 +19,19 @@ func (d *detail) DoGet(w http.ResponseWriter, r *http.Request) {
 		"./html/header.html",
 		"./html/edit.html",
 	))
-	var table server.ViewTable
-
-	switch r.URL.Query().Get("table") {
-	case "list", "List":
-		table = list
-	case "content":
-		table = content
-	default:
-		table = site
+	table, ok := tables[r.URL.Query().Get("table")]
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	table.ID = template.JS(r.URL.Query().Get("id"))
 
 	if err := t.Execute(w, table); err != nil {
-		log.Errorf("Execute error:%v, site:%+v", err, site)
+		log.Errorf("Execute error:%v, table:%+v", err, table)
 		return
 	}
-	log.Debugf("site:%+v", site)
+	log.Debugf("site:%+v", table)
 }
 
 type index struct {
@@ -56,20 +49,21 @@ func (i *index) DoGet(w http.ResponseWriter, r *http.Request) {
 		"./html/message.html",
 		"./html/common.html",
 	))
-	var table server.ViewTable
 
-	switch r.URL.Query().Get("table") {
-	case "list":
-		table = list
-	case "content":
-		table = content
-	default:
-		table = site
+	name := r.URL.Query().Get("table")
+	if name == "" {
+		name = "site"
+	}
+
+	table, ok := tables[name]
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	if err := t.Execute(w, table); err != nil {
-		log.Errorf("Execute error:%v, site:%+v", err, site)
+		log.Errorf("Execute error:%v, site:%+v", err, table)
 		return
 	}
-	log.Debugf("site:%+v", site)
+	log.Debugf("site:%+v", table)
 }
