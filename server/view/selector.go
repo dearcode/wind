@@ -38,7 +38,7 @@ func (s *selector) DoGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rows := table.Selector
+	rows := table.GetSelector()
 
 	if err = orm.NewStmt(db, s.Table).Query(rows); err != nil {
 		log.Errorf("query error:%v, req:%v", errors.ErrorStack(err), r)

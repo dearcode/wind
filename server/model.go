@@ -2,6 +2,7 @@ package server
 
 import (
 	"html/template"
+	"reflect"
 )
 
 //ListSelector 下拉列表
@@ -117,4 +118,9 @@ type ViewTable struct {
 	Lable    string
 	Selector interface{}
 	Fields   []ViewField
+}
+
+//GetSelector 生成新Selector对象
+func (vt *ViewTable) GetSelector() interface{} {
+	return reflect.New(reflect.TypeOf(vt.Selector)).Interface()
 }

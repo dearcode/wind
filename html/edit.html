@@ -57,7 +57,11 @@
     function modifyDialog(item) {
         confirmID = item.ID;
         {{range .Fields}}
+        {{ if eq .Widget 1}}
+        $("#{{.Column}}").val(item.{{.Relation}});
+        {{else}}
         $("#{{.Name}}").val(item.{{.Name}});
+        {{end}}
         $("#data_line_{{.Name}}").show();
         {{if .Readonly}}
         $("#{{.Name}}").attr("readonly","readonly");
@@ -86,6 +90,7 @@
         $.ajax({ 
             type: "GET",
             url:"/selector/?table={{.Reference}}", 
+            async: false,
             dataType:"json",
             success:function(result){
                 $.each(result.Data, function (index, item) {  
