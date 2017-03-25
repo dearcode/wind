@@ -116,11 +116,22 @@ type ViewTable struct {
 	Name     template.HTML
 	ID       template.JS
 	Lable    string
-	Selector interface{}
 	Fields   []ViewField
+	Selector interface{}
+	Object   interface{}
 }
 
 //GetSelector 生成新Selector对象
 func (vt *ViewTable) GetSelector() interface{} {
 	return reflect.New(reflect.TypeOf(vt.Selector)).Interface()
+}
+
+//GetObject 生成新Selector对象
+func (vt *ViewTable) GetObject() interface{} {
+	return reflect.New(reflect.TypeOf(vt.Object)).Interface()
+}
+
+//GetObjectSlice 生成新Selector对象
+func (vt *ViewTable) GetObjectSlice() interface{} {
+	return reflect.New(reflect.SliceOf(reflect.TypeOf(vt.Object))).Interface()
 }

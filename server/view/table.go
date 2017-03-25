@@ -35,16 +35,13 @@ func (t *table) DoPut(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	var data interface{}
-
-	switch t.Model {
-	case "site":
-		data = &server.SiteInfo{}
-	case "list":
-		data = &server.ListInfo{}
-	case "content":
-		data = &server.ContentInfo{}
+	table, ok := tables[t.Model]
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
+
+	data := table.GetObject()
 
 	if err := orm.NewStmt(db, t.Model).Where("%s.id=%d", t.Model, t.ID).Query(data); err != nil {
 		log.Errorf("query error:%v, req:%+v", err, r)
@@ -76,12 +73,13 @@ func (t *table) DoPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var data interface{}
-
-	switch t.Model {
-	case "site":
-		data = &server.SiteInfo{}
+	table, ok := tables[t.Model]
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
+
+	data := table.GetObject()
 
 	if err := handler.ParseFormVars(r, data); err != nil {
 		log.Errorf("invalid request:%v, error:%v", r, err)
@@ -139,16 +137,12 @@ func (t *table) DoGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var rows interface{}
-
-	switch t.Model {
-	case "site":
-		rows = &[]server.SiteInfo{}
-	case "list":
-		rows = &[]server.ListInfo{}
-	case "content":
-		rows = &[]server.ContentInfo{}
+	table, ok := tables[t.Model]
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
+	rows := table.GetObjectSlice()
 
 	if err = stmt.Query(rows); err != nil {
 		log.Errorf("query error:%v", errors.ErrorStack(err))

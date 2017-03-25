@@ -26,8 +26,10 @@ func onStaticGet(w http.ResponseWriter, r *http.Request) {
 var (
 	tables = map[string]server.ViewTable{
 		"site": {
-			Name:  template.HTML("site"),
-			Lable: "站点信息",
+			Name:   template.HTML("site"),
+			Lable:  "站点信息",
+			Object: server.SiteInfo{},
+
 			Fields: []server.ViewField{
 				{Name: "ID", Lable: "ID", Widget: server.WidgetText, Readonly: true},
 				{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
@@ -43,6 +45,7 @@ var (
 
 		"list": {
 			Selector: []server.ListSelector{},
+			Object:   server.ListInfo{},
 			Name:     template.HTML("list"),
 			Lable:    "列表规则",
 			Fields: []server.ViewField{
@@ -50,10 +53,10 @@ var (
 				{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
 				{Name: "BodyBegin", Lable: "内容开始", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
 				{Name: "BodyEnd", Lable: "内容结束", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "ItemEnd", Lable: "子项开始", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "ItemEnd", Lable: "子项结束", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "URLEnd", Lable: "链接开始", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "URLEnd", Lable: "链接结束", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
+				{Name: "ItemEnd", Lable: "子项开始", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
+				{Name: "ItemEnd", Lable: "子项结束", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
+				{Name: "URLEnd", Lable: "链接开始", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
+				{Name: "URLEnd", Lable: "链接结束", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
 				{Name: "PageEnd", Lable: "页签开始", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
 				{Name: "PageEnd", Lable: "页签结束", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
 				{Name: "Mtime", Lable: "更新时间", Widget: server.WidgetText, Sortable: true, Visible: true, Modifiable: true, Readonly: true},
@@ -62,6 +65,7 @@ var (
 
 		"content": {
 			Selector: []server.ContentSelector{},
+			Object:   server.ContentInfo{},
 			Name:     template.HTML("content"),
 			Lable:    "内容规则",
 			Fields: []server.ViewField{
@@ -69,12 +73,12 @@ var (
 				{Name: "Name", Lable: "名称", Widget: server.WidgetText, Sortable: true, Addible: true, Visible: true, Modifiable: true},
 				{Name: "BodyBegin", Lable: "内容开始", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
 				{Name: "BodyEnd", Lable: "内容结束", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "DateEnd", Lable: "日期开始", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "DateEnd", Lable: "日期结束", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "TitleEnd", Lable: "标题开始", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "TitleEnd", Lable: "标题结束", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "ContentEnd", Lable: "正文开始", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
-				{Name: "ContentEnd", Lable: "正文结束", Widget: server.WidgetTextArea, Addible: true, Visible: true, Modifiable: true},
+				{Name: "DateEnd", Lable: "日期开始", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
+				{Name: "DateEnd", Lable: "日期结束", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
+				{Name: "TitleEnd", Lable: "标题开始", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
+				{Name: "TitleEnd", Lable: "标题结束", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
+				{Name: "ContentEnd", Lable: "正文开始", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
+				{Name: "ContentEnd", Lable: "正文结束", Widget: server.WidgetTextArea, Addible: true, Modifiable: true},
 				{Name: "Mtime", Lable: "更新时间", Widget: server.WidgetText, Sortable: true, Visible: true, Modifiable: true, Readonly: true},
 			},
 		},
