@@ -11,33 +11,37 @@
 			"Rev": "d4d997220708589b22858ade5405e9f17036d22b"
 		},
 		{
+			"ImportPath": "github.com/dearcode/crab/config",
+			"Rev": "a4e0e277700a69c1d0ffb32b3158ed4b9a0b110b"
+		},
+		{
 			"ImportPath": "github.com/dearcode/crab/handler",
-			"Rev": "a76c10e2acf581d375479d8d0d83fc5a9a3cd69a"
-		},
-		{
-			"ImportPath": "github.com/dearcode/crab/orm",
-			"Rev": "a76c10e2acf581d375479d8d0d83fc5a9a3cd69a"
-		},
-		{
-			"ImportPath": "github.com/dearcode/crab/validation",
-			"Rev": "a76c10e2acf581d375479d8d0d83fc5a9a3cd69a"
-		},
-		{
-			"ImportPath": "github.com/go-sql-driver/mysql",
-			"Comment": "v1.3-2-g2e00b5c",
-			"Rev": "2e00b5cd70399450106cec6431c2e2ce3cae5034"
-		},
-		{
-			"ImportPath": "github.com/google/btree",
-			"Rev": "7d79101e329e5a3adf994758c578dab82b90c017"
-		},
-		{
-			"ImportPath": "github.com/juju/errors",
-			"Rev": "6f54ff6318409d31ff16261533ce2c8381a4fd5d"
+			"Rev": "a4e0e277700a69c1d0ffb32b3158ed4b9a0b110b"
 		},
 		{
 			"ImportPath": "github.com/dearcode/crab/meta",
-			"Rev": "a76c10e2acf581d375479d8d0d83fc5a9a3cd69a"
+			"Rev": "a4e0e277700a69c1d0ffb32b3158ed4b9a0b110b"
+		},
+		{
+			"ImportPath": "github.com/dearcode/crab/orm",
+			"Rev": "a4e0e277700a69c1d0ffb32b3158ed4b9a0b110b"
+		},
+		{
+			"ImportPath": "github.com/dearcode/crab/validation",
+			"Rev": "a4e0e277700a69c1d0ffb32b3158ed4b9a0b110b"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.3",
+			"Rev": "a0583e0143b1624142adab07e0e97fe106d99561"
+		},
+		{
+			"ImportPath": "github.com/google/btree",
+			"Rev": "316fb6d3f031ae8f4d457c6c5186b9e3ded70435"
+		},
+		{
+			"ImportPath": "github.com/juju/errors",
+			"Rev": "b2c7a7da5b2995941048f60146e67702a292e468"
 		}
 	]
 }

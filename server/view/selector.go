@@ -15,6 +15,11 @@ type selector struct {
 	Table string `json:"table"`
 }
 
+type selectorRow struct {
+	ID   uint64
+	Name string
+}
+
 func (s *selector) DoGet(w http.ResponseWriter, r *http.Request) {
 	if err := handler.ParseURLVars(r, s); err != nil {
 		log.Errorf("invalid request:%v, error:%v", r, err)
@@ -32,13 +37,7 @@ func (s *selector) DoGet(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	table, ok := tables[r.URL.Query().Get("table")]
-	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	rows := table.GetSelector()
+	rows := &[]selectorRow{}
 
 	if err = orm.NewStmt(db, s.Table).Query(rows); err != nil {
 		log.Errorf("query error:%v, req:%v", errors.ErrorStack(err), r)

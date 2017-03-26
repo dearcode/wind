@@ -1,4 +1,4 @@
-<div class="modal fade" id="data_dialog" style="z-index:2000">
+<div class="modal fade" id="data_dialog" style="z-index:1050">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -19,7 +19,10 @@
                             <label class="radio-inline"> <input type="radio" name="{{.Name}}" id="{{.Name}}" value="{{$i}}" >{{$v}}</label>
                             {{end}}
                             {{else if eq .Widget 1}}
-                            <select class="form-control" id="{{.Column}}" name="{{.Column}}" >
+                            <select class="form-control select2" id="{{TableColumn .Relation}}" name="{{TableColumn .Relation}}" style="width:100%" >
+                            </select>
+                            {{else if eq .Widget 4}}
+                            <select class="form-control select2" multiple="multiple" id="{{TableColumn .Relation}}" name="{{TableColumn .Relation}}" style="width:100%" >
                             </select>
                             {{else if eq .Widget 3}}
                             <textarea class="form-control" id="{{.Name}}" name="{{.Name}}" value="" placeholder="" rows="2" ></textarea>
@@ -40,7 +43,6 @@
 
 
 <script>
-
     function createDialog() {
         $("#data_form").each(function() { this.reset();});
         {{range .Fields}}
@@ -58,7 +60,14 @@
         confirmID = item.ID;
         {{range .Fields}}
         {{ if eq .Widget 1}}
-        $("#{{.Column}}").val(item.{{.Relation}});
+        $("#{{TableColumn .Relation}}").select2("val", String(item.{{.Relation}}));
+        {{else if eq .Widget 4}}
+        var ids = new Array();
+
+        $.each(item.{{TableName .Relation}}, function (index, o) {  
+            ids.push(o.ID)
+        });
+        $("#{{TableColumn .Relation}}").select2("val", String(ids));
         {{else}}
         $("#{{.Name}}").val(item.{{.Name}});
         {{end}}
@@ -86,15 +95,15 @@
 
     function initView() {
         {{range .Fields}}
-        {{if eq .Widget 1}}
+        {{if eq .Widget 1 4 }}
         $.ajax({ 
             type: "GET",
-            url:"/selector/?table={{.Reference}}", 
+            url:"/selector/?table={{TableName .Relation}}", 
             async: false,
             dataType:"json",
             success:function(result){
                 $.each(result.Data, function (index, item) {  
-                    $("#{{.Column}}").append("<option value='"+item.ID+"'>"+item.Name+"</option>");
+                    $("#{{TableColumn .Relation}}").append("<option value='"+item.ID+"'>"+item.Name+"</option>");
                 }); 
             }, 
             error:function(XMLHttpRequest,textStatus, errorThrown) { 
@@ -131,6 +140,9 @@
         });
     }
 
-    initView();
+    $(function(){
+        initView();
+        $(".select2").select2();
+    });
 
 </script>

@@ -1,20 +1,17 @@
-package server
+package view
 
 import (
 	"html/template"
 	"reflect"
 )
 
-//ListSelector 下拉列表
-type ListSelector struct {
+//FilterInfo 自动修改规则
+type FilterInfo struct {
 	ID   uint64
 	Name string
-}
-
-//ContentSelector 下拉列表
-type ContentSelector struct {
-	ID   uint64
-	Name string
+	Key1 string
+	Key2 string
+	Type int
 }
 
 //SiteInfo 对应站点表.
@@ -27,6 +24,10 @@ type SiteInfo struct {
 		Name string
 	}
 	Content struct {
+		ID   uint64
+		Name string
+	}
+	Filter []struct {
 		ID   uint64
 		Name string
 	}
@@ -89,21 +90,20 @@ const (
 	WidgetRadio
 	//WidgetTextArea 多行文本.
 	WidgetTextArea
+	//WidgetSelectMore 下拉列表.
+	WidgetSelectMore
 )
 
-//ViewField 前端显示用的字段属性.
+//Field 前端显示用的字段属性.
 //Addible 在新建对话框中是否显示
 //Modifiable 在修改对话框中是否显示
 //Visible 在列表框里是否显示
 //Readonly 是否可修改
-type ViewField struct {
+type Field struct {
 	Name       template.JS
 	Lable      template.JS
-	Reference  template.JS
 	Relation   template.JS
-	Column     template.JS
 	Widget     WidgetType
-	Enum       []string
 	Sortable   bool
 	Addible    bool
 	Visible    bool
@@ -111,27 +111,22 @@ type ViewField struct {
 	Readonly   bool
 }
 
-//ViewTable 前端显示用, 对应数据库中的table.
-type ViewTable struct {
+//Table 前端显示用, 对应数据库中的table.
+type Table struct {
 	Name     template.HTML
 	ID       template.JS
 	Lable    string
-	Fields   []ViewField
+	Fields   []Field
 	Selector interface{}
 	Object   interface{}
 }
 
-//GetSelector 生成新Selector对象
-func (vt *ViewTable) GetSelector() interface{} {
-	return reflect.New(reflect.TypeOf(vt.Selector)).Interface()
-}
-
 //GetObject 生成新Selector对象
-func (vt *ViewTable) GetObject() interface{} {
-	return reflect.New(reflect.TypeOf(vt.Object)).Interface()
+func (t *Table) GetObject() interface{} {
+	return reflect.New(reflect.TypeOf(t.Object)).Interface()
 }
 
 //GetObjectSlice 生成新Selector对象
-func (vt *ViewTable) GetObjectSlice() interface{} {
-	return reflect.New(reflect.SliceOf(reflect.TypeOf(vt.Object))).Interface()
+func (t *Table) GetObjectSlice() interface{} {
+	return reflect.New(reflect.SliceOf(reflect.TypeOf(t.Object))).Interface()
 }

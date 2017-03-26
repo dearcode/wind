@@ -34,16 +34,13 @@ func (i *item) DoGet(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	var data interface{}
-
-	switch i.Table {
-	case "site":
-		data = &server.SiteInfo{}
-	case "list":
-		data = &server.ListInfo{}
-	case "content":
-		data = &server.ContentInfo{}
+	table, ok := tables[i.Table]
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
+
+	data := table.GetObject()
 
 	if err = orm.NewStmt(db, i.Table).Query(data); err != nil {
 		log.Errorf("query error:%v", errors.ErrorStack(err))

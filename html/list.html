@@ -21,8 +21,8 @@
                 <tr>
                     {{range .Fields}}
                     {{if .Visible }}
-                    {{if .Reference}}
-                    <th data-field='{{.Name}}' data-sortable="{{.Sortable}}" data-formatter="{{.Reference}}Formatter">{{.Lable}}</th>
+                    {{if .Relation}}
+                    <th data-field='{{.Name}}' data-sortable="{{.Sortable}}" data-formatter="{{TableName .Relation}}Formatter">{{.Lable}}</th>
                     {{else}}
                     <th data-field='{{.Name}}' data-sortable="{{.Sortable}}" >{{.Lable}}</th>
                     {{end}}
@@ -41,9 +41,24 @@
 
     {{range .Fields}}
     {{if .Visible }}
-    {{if .Reference}}
-    function {{.Reference}}Formatter(value, row, index) {
-        return '<a target="_parent" href="/detail/?table={{.Reference}}&id='+row.{{.Relation}}+'" >'+row.{{.Name}}+'</a>';
+    {{if .Relation}}
+    function {{TableName .Relation}}Formatter(value, row, index) {
+        {{if eq .Widget 4}}
+        var h = "";
+        if (row.{{TableName .Relation}} == null) {
+            return "";
+        }
+
+        $.each(row.{{TableName .Relation}}, function (index, item) {  
+            if (item.Name == "") {
+                item.Name = item.ID;
+            }
+            h += '<a target="_parent" href="/detail/?table={{TableNameToLower .Relation}}&id='+item.ID+'" >'+item.Name+'</a>&nbsp;';
+        });
+        return h;
+        {{else}}
+        return '<a target="_parent" href="/detail/?table={{TableNameToLower .Relation}}&id='+row.{{.Relation}}+'" >'+row.{{.Name}}+'</a>';
+        {{end}}
     }
     {{end}}
     {{end}}
@@ -83,6 +98,8 @@
         'click .delete': openDeleteDialog, 
     };
 
-    $('#data_table').bootstrapTable('refreshOptions',{});
+    $(function() {
+        $('#data_table').bootstrapTable('refreshOptions',{});
+    })
 
 </script>

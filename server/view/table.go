@@ -133,7 +133,7 @@ func (t *table) DoGet(w http.ResponseWriter, r *http.Request) {
 
 	if total < 1 {
 		log.Infof("req:%v, data not found", r)
-		handler.SendRows(w, total, &server.SiteInfo{})
+		handler.SendRows(w, total, &SiteInfo{})
 		return
 	}
 
