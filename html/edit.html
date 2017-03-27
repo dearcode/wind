@@ -63,11 +63,10 @@
         $("#{{TableColumn .Relation}}").select2("val", String(item.{{.Relation}}));
         {{else if eq .Widget 4}}
         var ids = new Array();
-
         $.each(item.{{TableName .Relation}}, function (index, o) {  
-            ids.push(o.ID)
+            ids.push(o.ID);
         });
-        $("#{{TableColumn .Relation}}").select2("val", String(ids));
+        $("#{{TableColumn .Relation}}").val(ids).trigger("change");
         {{else}}
         $("#{{.Name}}").val(item.{{.Name}});
         {{end}}
